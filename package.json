@@ -6,30 +6,43 @@
   "scripts": {
     "start": "babel-node server",
     "start:prod": "nodemon --exec babel-node server",
-    "test": "nyc mocha tests/**/**.test.js --require babel-register --exit"
+    "test": "nyc mocha tests/**/**.test.js --require babel-register --exit",
+    "cover": "./node_modules/.bin/babel-node node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- ./tests/**/**.test.js --exit",
+    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
+    "build": "babel . --ignore node_modules,coverage,dist -d dist/ "
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KvNGCzA/piques.git"
+    "url": "git+https://github.com/KvNGCzA/piques-backend.git"
   },
-  "author": "",
+  "author": "Christopher Akanmu",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/KvNGCzA/piques/issues"
+    "url": "https://github.com/KvNGCzA/piques-backend/issues"
   },
-  "homepage": "https://github.com/KvNGCzA/piques#readme",
+  "homepage": "https://github.com/KvNGCzA/piques-backend#readme",
   "dependencies": {
     "dotenv": "^6.2.0",
     "express": "^4.16.4"
   },
   "devDependencies": {
-    "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.13.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.12.4",
     "expect": "^24.1.0",
+    "istanbul": "1.1.0-alpha.1",
     "mocha": "^5.2.0",
+    "mocha-lcov-reporter": "^1.3.0",
     "nodemon": "^1.18.10",
     "nyc": "^13.2.0"
   }

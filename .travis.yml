@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "stable"
+services:
+  - postgresql
+addons:
+    code_climate:
+        repo_token: a79492da8922a1ab669d1f51e787f423b79f6115dd9cdecbd74bbda3c718a681
+cache:
+  directories:
+    - "node_modules"
+before_script:
+  - psql -c 'create database valinor_backend_test;' -U postgres
+script:
+  - npm run coveralls
