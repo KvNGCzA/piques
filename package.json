@@ -6,7 +6,7 @@
   "scripts": {
     "start": "babel-node server",
     "start:prod": "nodemon --exec babel-node server",
-    "test": "nyc mocha tests/**/**.test.js --require babel-register --exit",
+    "test": "NODE_ENV=test nyc mocha tests/**/**.test.js --require babel-register --exit",
     "cover": "./node_modules/.bin/babel-node node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- ./tests/**/**.test.js --exit",
     "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
     "build": "babel . --ignore node_modules,coverage,dist -d dist/ "
@@ -22,15 +22,19 @@
   },
   "homepage": "https://github.com/KvNGCzA/piques-backend#readme",
   "dependencies": {
+    "babel-register": "^6.26.0",
     "dotenv": "^6.2.0",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "pg": "^7.8.0",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.42.0",
+    "sequelize-cli": "^5.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "coveralls": "^3.0.2",
