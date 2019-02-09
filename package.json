@@ -1,0 +1,36 @@
+{
+  "name": "piques",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node server",
+    "start:prod": "nodemon --exec babel-node server",
+    "test": "nyc mocha tests/**/**.test.js --require babel-register --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KvNGCzA/piques.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KvNGCzA/piques/issues"
+  },
+  "homepage": "https://github.com/KvNGCzA/piques#readme",
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "expect": "^24.1.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.10",
+    "nyc": "^13.2.0"
+  }
+}
