@@ -1,11 +1,18 @@
 import expect from 'expect';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import app from '../../server';
 
-const add = (a,b) => a + b;
 
-const result = add(2,3);
+chai.use(chaiHttp);
+const { request } = chai;
 
 describe('test test', () => {
-  it('should return 5', () => {
-    expect(result).toBe(5);
+  it('dfa', () => {
+    request(app)
+      .get('/')
+      .end((err, res) => {
+        expect(res.body.message).toEqual('server up');
+      });
   });
 });
