@@ -12,6 +12,15 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING,
     },
+    password: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
+    verified: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
   }, {});
   User.associate = (models) => {
     // associations can be defined here
