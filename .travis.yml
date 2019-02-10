@@ -11,5 +11,8 @@ cache:
     - "node_modules"
 before_script:
   - psql -c 'create database valinor_backend_test;' -U postgres
+  - yarn run db:roll
+after_script:
+  - yarn run db:back
 script:
-  - npm run coveralls
+  - yarn run coveralls
