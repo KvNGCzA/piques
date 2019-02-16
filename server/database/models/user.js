@@ -33,7 +33,8 @@ export default (sequelize, DataTypes) => {
     const { UserRole, UserOrganization } = models;
 
     User.hasMany(UserRole, {
-      foreignKey: 'userId'
+      foreignKey: 'userId',
+      as: 'role'
     });
 
     User.hasMany(UserOrganization, {

@@ -15,7 +15,8 @@ class UserValidation {
     * @static
   */
   static validateEmail(req) {
-    req.checkBody('email', 'please enter email').exists();
+    req.checkBody('email', 'please enter email')
+      .exists().notEmpty();
     if (req.body.email) {
       req.checkBody('email', 'please enter a valid email').isEmail();
     }
@@ -29,7 +30,8 @@ class UserValidation {
     * @static
   */
   static validateSignupType(req) {
-    req.checkBody('signupType', 'please enter a signup type').exists();
+    req.checkBody('signupType', 'please enter a signup type')
+      .exists().notEmpty();
     if (req.body.signupType) {
       req.checkBody('signupType', 'please enter a valid signup type')
         .custom((signupType) => {
@@ -76,7 +78,8 @@ class UserValidation {
     * @static
   */
   static validatePassword(req) {
-    req.checkBody('password', 'please enter a password').exists();
+    req.checkBody('password', 'please enter a password')
+      .exists().notEmpty();
     if (req.body.password) {
       req.checkBody('password', 'password must be more than 7 characters')
         .isLength({ min: 8 });
@@ -109,6 +112,21 @@ class UserValidation {
   static validateUserSignup(req, res, next) {
     UserValidation.validateEmail(req);
     UserValidation.validateName(req);
+    UserValidation.validatePassword(req);
+    formattedError(req, res, next);
+  }
+
+  /**
+    * @description - This method validates the user login
+    * @param {object} req - The request object
+    * @param {object} res - The response object
+    * @param {object} next - The next function
+    * @returns {null} - returns nothing
+    * @memberOf UserValidation
+    * @static
+  */
+  static validateUserLogin(req, res, next) {
+    UserValidation.validateEmail(req);
     UserValidation.validatePassword(req);
     formattedError(req, res, next);
   }

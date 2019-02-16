@@ -1,11 +1,11 @@
 import express from 'express';
-import user from './users';
+import users from './users';
 
 const router = express.Router();
 
 router.use(
   '/',
-  user,
+  users,
 );
 
 export default router;
