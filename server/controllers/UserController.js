@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import models from '../database/models';
 import helpers from '../helpers';
 
-const { sendMail, createToken } = helpers;
+const { sendMail, createToken, extractId } = helpers;
 const {
   User,
   UserRole,
@@ -166,6 +166,51 @@ class UserController {
     } catch (error) {
       next(error);
     }
+  }
+
+  /**
+   * @description log a user or organization in
+    * @param {object} req - request object
+   * @param {object} res - response object
+   * @param {object} next - next function
+   * @returns {object} - returns null
+  */
+  static async login(req, res, next) {
+    const { password: receivedPassword } = req.body;
+    const {
+      id, password: hashedPassword, verified, accountType
+    } = req.userData;
+    const { userData } = req;
+    if (!verified) {
+      return res.status(400).json({
+        status: 'failure',
+        message: 'please verify your email'
+      });
+    }
+    delete userData.updatedAt;
+    delete userData.createdAt;
+    delete userData.password;
+    let compare, role, data = userData;
+    try {
+      compare = await bcrypt.compare(receivedPassword, hashedPassword);
+    } catch (error) {
+      next(error);
+    }
+    if (!compare) {
+      return res.status(400).json({
+        status: 'failure',
+        message: 'email/password do not match'
+      });
+    } if (accountType === 'user') {
+      role = extractId('roleId', userData.role);
+      data = { ...userData, role };
+    }
+    return res.status(200).json({
+      status: 'success',
+      message: `${accountType} successfully logged in`,
+      userData: { ...data },
+      token: createToken(id)
+    });
   }
 }
 

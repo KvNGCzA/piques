@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import helpers from '../helpers';
 
-const { identifyUser } = helpers;
+const { identifyUserById } = helpers;
 
 export default async (req, res, next) => {
   const token = req.headers.authorization || req.query.token;
@@ -21,7 +21,7 @@ export default async (req, res, next) => {
   );
   if (!decoded.message) {
     const { id } = decoded;
-    req.userData = await identifyUser(id, res, next);
+    req.userData = await identifyUserById(id, res, next);
     return next();
   }
   if (decoded.message === 'jwt expired') {

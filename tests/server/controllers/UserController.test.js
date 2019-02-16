@@ -10,6 +10,7 @@ const { createToken } = helpers;
 const { request } = chai;
 const signupUrl = '/api/v1/users/signup';
 const verifyUrl = '/api/v1/users/verify';
+const loginUrl = '/api/v1/users/login';
 let userVerificationToken, organizationVerificationToken;
 describe('TEST SIGNUP ROUTE', () => {
   describe('TEST SIGNUP USER CONTROLLER', () => {
@@ -291,6 +292,24 @@ describe('TEST SIGNUP ROUTE', () => {
     });
   });
 
+  describe('TEST LOGIN USER FAILURE', () => {
+    it('should fail to login if user is not verified', (done) => {
+      request(app)
+        .post(loginUrl)
+        .send({
+          email: 'test@yahoo.com',
+          password: 'testtesttest',
+        })
+        .end((err, res) => {
+          const { body: { status, message }, status: statusCode } = res;
+          expect(statusCode).toBe(400);
+          expect(status).toBe('failure');
+          expect(message).toBe('please verify your email');
+          done();
+        });
+    });
+  });
+
   describe('TEST VERIFY USER CONTROLLER', () => {
     it('should verify a user', (done) => {
       request(app)
@@ -334,9 +353,27 @@ describe('TEST SIGNUP ROUTE', () => {
         .put(`${verifyUrl}?token=${token}`)
         .end((err, res) => {
           const { body: { message, status }, status: statusCode } = res;
-          expect(statusCode).toBe(400);
+          expect(statusCode).toBe(404);
           expect(status).toBe('failure');
-          expect(message).toBe('user does not exist');
+          expect(message).toBe('user not found');
+          done();
+        });
+    });
+  });
+
+  describe('TEST LOGIN USER SUCCESS', () => {
+    it('should login if user is verified', (done) => {
+      request(app)
+        .post(loginUrl)
+        .send({
+          email: 'test@yahoo.com',
+          password: 'testtesttest',
+        })
+        .end((err, res) => {
+          const { body: { status, message }, status: statusCode } = res;
+          expect(statusCode).toBe(200);
+          expect(status).toBe('success');
+          expect(message).toBe('user successfully logged in');
           done();
         });
     });
