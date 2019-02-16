@@ -1,27 +1,27 @@
 /* eslint-disable */
 export default (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
+  const Organization = sequelize.define('Organization', {
     id: {
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       type: DataTypes.UUID
     },
-    firstName: {
-      allowNull: false,
-      type: DataTypes.STRING,
-    },
-    lastName: {
+    name: {
       allowNull: false,
       type: DataTypes.STRING,
     },
     email: {
-      allowNull: false,
       type: DataTypes.STRING,
     },
     password: {
-      allowNull: false,
       type: DataTypes.STRING,
+    },
+    address: {
+      type: DataTypes.STRING,
+    },
+    country: {
+      type: DataTypes.STRING
     },
     verified: {
       allowNull: false,
@@ -29,17 +29,12 @@ export default (sequelize, DataTypes) => {
       defaultValue: false
     },
   }, {});
-  User.associate = (models) => {
-    const { UserRole, UserOrganization } = models;
+  Organization.associate = (models) => {
+    const { OrganizationType } = models;
 
-    User.hasMany(UserRole, {
-      foreignKey: 'userId'
-    });
-
-    User.hasMany(UserOrganization, {
-      foreignKey: 'userId'
-    });
-
+    Organization.hasMany(OrganizationType, {
+      foreignKey: 'organizationId'
+    })
   };
-  return User;
+  return Organization;
 };

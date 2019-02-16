@@ -18,7 +18,12 @@ export default (req, res, next, statusCode) => {
       errors[`${x.param}`] = [];
     });
     newErrors.forEach((err) => {
-      if (errors[`${err.param}`]) { errors[`${err.param}`].push(err.msg); }
+      if (
+        errors[`${err.param}`]
+        && errors[`${err.param}`].indexOf(err.msg) === -1
+      ) {
+        errors[`${err.param}`].push(err.msg);
+      }
     });
   }
   if (newErrors || message.length) {
