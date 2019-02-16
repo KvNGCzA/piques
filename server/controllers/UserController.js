@@ -44,8 +44,7 @@ class UserController {
   */
   static async signupUser(obj) {
     const {
-      firstName, lastName, email,
-      password, res, next
+      firstName, lastName, email, password, res, next
     } = obj;
     const encryptedPassword = bcrypt.hashSync(password, 10);
 
@@ -84,9 +83,7 @@ class UserController {
   */
   static async signupOrganization(obj) {
     const {
-      name, email, password,
-      address, country, next,
-      res, typeId
+      name, email, password, address, country, next, res, typeId
     } = obj;
     const encryptedPassword = bcrypt.hashSync(password, 10);
     try {
