@@ -1,4 +1,6 @@
-import formattedError from '../helper/formattedError';
+import helpers from '../helpers';
+
+const { formattedError } = helpers;
 
 /**
  * @class UserValidation

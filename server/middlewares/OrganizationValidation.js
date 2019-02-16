@@ -1,6 +1,7 @@
-import formattedError from '../helper/formattedError';
+import helpers from '../helpers';
 import UserValidation from './UserValidation';
 
+const { formattedError } = helpers;
 const { validateEmail, validatePassword } = UserValidation;
 /**
  * @class OrganizationValidation

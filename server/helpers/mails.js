@@ -13,7 +13,20 @@ export default (obj) => {
             <br><br><br>
             Verify your email by clicking on the link below
             <br><br><br>
-            <a href="${process.env.BASE_URL}/users/verify?token=${token}">Click Me</a>
+            <a href="${process.env.FRONTEND_BASE_URL}/users/verify?token=${token}">Verify Account</a>
+          `
+      };
+    case 'welcome':
+      return {
+        to,
+        from: 'PiQues<no-reply@piques.com>',
+        subject: `Email Verified! Welcome to PiQues ${fullName}!`,
+        html: `<b>Dear ${fullName}</b>,
+            <br><br><br>
+            Welcome to PiQues. Now that your email has been verified you can visit our site and
+            enjoy our services.
+            <br><br><br>
+            <a href="${process.env.FRONTEND_BASE_URL}">Visit Site</a>
           `
       };
     default:

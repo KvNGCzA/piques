@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import models from '../database/models';
-import sendMail from '../helper/sendMail';
+import helpers from '../helpers';
 
+const { sendMail, createToken } = helpers;
 const {
   User,
   UserRole,
@@ -64,7 +64,7 @@ class UserController {
         roleId: 98536
       });
       // create jwt token
-      const token = jwt.sign({ id }, process.env.JWT_SECRET);
+      const token = createToken(id, '24h');
       // send mail
       sendMail({
         to: email,
@@ -108,7 +108,7 @@ class UserController {
         typeId
       });
       // create jwt token
-      const token = jwt.sign({ id: organizationId }, process.env.JWT_SECRET);
+      const token = createToken(organizationId, '24h');
       // send mail
       sendMail({
         to: email,
@@ -121,6 +121,47 @@ class UserController {
         status: 'success',
         message: 'organization successfully created',
         token
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @description verify a user
+    * @param {object} req - request object
+   * @param {object} res - response object
+   * @param {object} next - next function
+   * @returns {object} - returns null
+  */
+  static async verifyUser(req, res, next) {
+    const {
+      id, accountType, verified,
+      email, name, firstName, lastName
+    } = req.userData;
+    if (verified) {
+      return res.status(200).json({
+        status: 'failure',
+        message: `${accountType} is already verified`
+      });
+    }
+    const verifiedData = { verified: true };
+    try {
+      if (accountType === 'organization') {
+        await Organization.update(verifiedData, {
+          where: { id }
+        });
+        sendMail({ to: email, fullName: `${name}`, mailType: 'welcome' });
+      }
+      if (accountType === 'user') {
+        await User.update(verifiedData, {
+          where: { id }
+        });
+        sendMail({ to: email, fullName: `${firstName} ${lastName}`, mailType: 'welcome' });
+      }
+      return res.status(200).json({
+        status: 'success',
+        message: `${accountType} verified successfully`
       });
     } catch (error) {
       next(error);

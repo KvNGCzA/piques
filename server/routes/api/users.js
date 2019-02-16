@@ -1,13 +1,15 @@
 import express from 'express';
 import UserController from '../../controllers/UserController';
-import checkEmail from '../../middlewares/checkEmail';
-import checkOrganizationType from '../../middlewares/checkOrganizationType';
-import UserValidation from '../../middlewares/UserValidation';
-import signupValidator from '../../middlewares/signupValidator';
+import middlewares from '../../middlewares';
 
-const { signup } = UserController;
-const { signupTypeValidator } = UserValidation;
 const user = express.Router();
+const {
+  checkEmail, checkOrganizationType,
+  signupValidator, UserValidation,
+  verifyToken
+} = middlewares;
+const { signup, verifyUser } = UserController;
+const { signupTypeValidator } = UserValidation;
 
 
 // sign user or organization up
@@ -19,5 +21,8 @@ user.post(
   checkOrganizationType,
   signup
 );
+
+// verify user account
+user.put('/users/verify', verifyToken, verifyUser);
 
 export default user;
