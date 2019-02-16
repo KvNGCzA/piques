@@ -2,12 +2,15 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import expect from 'expect';
 import app from '../../../server';
+import helpers from '../../../server/helpers';
 
 chai.use(chaiHttp);
 
+const { createToken } = helpers;
 const { request } = chai;
 const signupUrl = '/api/v1/users/signup';
-
+const verifyUrl = '/api/v1/users/verify';
+let userVerificationToken, organizationVerificationToken;
 describe('TEST SIGNUP ROUTE', () => {
   describe('TEST SIGNUP USER CONTROLLER', () => {
     it('should sign up a new user', (done) => {
@@ -21,7 +24,8 @@ describe('TEST SIGNUP ROUTE', () => {
           signupType: 'user'
         })
         .end((err, res) => {
-          const { body: { message, status }, status: statusCode } = res;
+          const { body: { message, status, token }, status: statusCode } = res;
+          userVerificationToken = token;
           expect(statusCode).toBe(201);
           expect(status).toBe('success');
           expect(message).toBe('user successfully created');
@@ -154,7 +158,8 @@ describe('TEST SIGNUP ROUTE', () => {
           signupType: 'organization'
         })
         .end((err, res) => {
-          const { body: { message, status }, status: statusCode } = res;
+          const { body: { message, status, token }, status: statusCode } = res;
+          organizationVerificationToken = token;
           expect(statusCode).toBe(201);
           expect(status).toBe('success');
           expect(message).toBe('organization successfully created');
@@ -281,6 +286,57 @@ describe('TEST SIGNUP ROUTE', () => {
           const { body: { errors: { type } }, status: statusCode } = res;
           expect(statusCode).toBe(422);
           expect(type[0]).toBe('please select a valid organization type');
+          done();
+        });
+    });
+  });
+
+  describe('TEST VERIFY USER CONTROLLER', () => {
+    it('should verify a user', (done) => {
+      request(app)
+        .put(`${verifyUrl}?token=${userVerificationToken}`)
+        .end((err, res) => {
+          const { body: { message, status }, status: statusCode } = res;
+          expect(statusCode).toBe(200);
+          expect(status).toBe('success');
+          expect(message).toBe('user verified successfully');
+          done();
+        });
+    });
+
+    it('should verify an organization', (done) => {
+      request(app)
+        .put(`${verifyUrl}?token=${organizationVerificationToken}`)
+        .end((err, res) => {
+          const { body: { message, status }, status: statusCode } = res;
+          expect(statusCode).toBe(200);
+          expect(status).toBe('success');
+          expect(message).toBe('organization verified successfully');
+          done();
+        });
+    });
+
+    it('should fail to verify if already verified', (done) => {
+      request(app)
+        .put(`${verifyUrl}?token=${organizationVerificationToken}`)
+        .end((err, res) => {
+          const { body: { message, status }, status: statusCode } = res;
+          expect(statusCode).toBe(200);
+          expect(status).toBe('failure');
+          expect(message).toBe('organization is already verified');
+          done();
+        });
+    });
+
+    it('should fail to verify if user does not exist in the database', (done) => {
+      const token = createToken({ id: '987f9876753rfeg3978e' });
+      request(app)
+        .put(`${verifyUrl}?token=${token}`)
+        .end((err, res) => {
+          const { body: { message, status }, status: statusCode } = res;
+          expect(statusCode).toBe(400);
+          expect(status).toBe('failure');
+          expect(message).toBe('user does not exist');
           done();
         });
     });
