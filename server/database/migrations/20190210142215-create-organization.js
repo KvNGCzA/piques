@@ -1,32 +1,31 @@
 /* eslint-disable */
 export default {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Organizations', {
     id: {
       allowNull: false,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
       type: Sequelize.UUID
     },
-    firstName: {
+    name: {
       allowNull: false,
-      type: Sequelize.STRING,
-    },
-    lastName: {
-      allowNull: false,
-      type: Sequelize.STRING,
+      type: Sequelize.STRING
     },
     email: {
-      allowNull: false,
-      type: Sequelize.STRING,
+      type: Sequelize.STRING
     },
     password: {
-      allowNull: false,
-      type: Sequelize.STRING,
+      type: Sequelize.STRING
+    },
+    address: {
+      type: Sequelize.STRING
+    },
+    country: {
+      type: Sequelize.STRING
     },
     verified: {
       allowNull: false,
-      type: Sequelize.BOOLEAN,
-      defaultValue: false
+      type: Sequelize.BOOLEAN
     },
     createdAt: {
       allowNull: false,
@@ -37,5 +36,5 @@ export default {
       type: Sequelize.DATE
     }
   }),
-  down: queryInterface => queryInterface.dropTable('Users')
+  down: queryInterface => queryInterface.dropTable('Organizations')
 };

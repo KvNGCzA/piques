@@ -1,4 +1,5 @@
 import formattedError from '../helper/formattedError';
+
 /**
  * @class UserValidation
  * @description Helps perform validations on user request body.
@@ -15,6 +16,25 @@ class UserValidation {
     req.checkBody('email', 'please enter email').exists();
     if (req.body.email) {
       req.checkBody('email', 'please enter a valid email').isEmail();
+    }
+  }
+
+  /**
+    * @description - This method validates signup type
+    * @param {object} req - The request object
+    * @returns {null} - returns nothing
+    * @memberOf UserValidation
+    * @static
+  */
+  static validateSignupType(req) {
+    req.checkBody('signupType', 'please enter a signup type').exists();
+    if (req.body.signupType) {
+      req.checkBody('signupType', 'please enter a valid signup type')
+        .custom((signupType) => {
+          const signupTypes = ['user', 'organization'];
+          if (signupTypes.indexOf(signupType) !== -1) return true;
+          return false;
+        });
     }
   }
 
@@ -59,6 +79,20 @@ class UserValidation {
       req.checkBody('password', 'password must be more than 7 characters')
         .isLength({ min: 8 });
     }
+  }
+
+  /**
+    * @description - This method validates the user signup
+    * @param {object} req - The request object
+    * @param {object} res - The response object
+    * @param {object} next - The next function
+    * @returns {null} - returns nothing
+    * @memberOf UserValidation
+    * @static
+  */
+  static signupTypeValidator(req, res, next) {
+    UserValidation.validateSignupType(req);
+    formattedError(req, res, next);
   }
 
   /**

@@ -10,9 +10,10 @@
     "cover": "./node_modules/.bin/babel-node node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- ./tests/**/**.test.js --exit",
     "coveralls": "yarn run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
     "build": "babel . --ignore node_modules,coverage,dist -d dist/ ",
-    "db:rollback": "yarn run db:back && yarn run db:roll",
+    "db:rollback": "yarn run db:back && yarn run db:roll && yarn run db:seed",
     "db:roll": "sequelize db:migrate",
-    "db:back": "sequelize db:migrate:undo:all"
+    "db:back": "sequelize db:migrate:undo:all",
+    "db:seed": "sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
