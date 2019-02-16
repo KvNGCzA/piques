@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-
 import models from '../database/models';
+import sendMail from '../helper/sendMail';
 
 const {
   User,
@@ -65,6 +65,13 @@ class UserController {
       });
       // create jwt token
       const token = jwt.sign({ id }, process.env.JWT_SECRET);
+      // send mail
+      sendMail({
+        to: email,
+        fullName: `${firstName} ${lastName}`,
+        mailType: 'verify signup',
+        token
+      });
       // return status and success message
       return res.status(201).json({
         status: 'success',
@@ -102,6 +109,13 @@ class UserController {
       });
       // create jwt token
       const token = jwt.sign({ id: organizationId }, process.env.JWT_SECRET);
+      // send mail
+      sendMail({
+        to: email,
+        fullName: `${name}`,
+        mailType: 'verify signup',
+        token
+      });
       // return status and success message
       return res.status(201).json({
         status: 'success',
