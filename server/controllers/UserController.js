@@ -2,12 +2,17 @@ import bcrypt from 'bcrypt';
 import models from '../database/models';
 import helpers from '../helpers';
 
-const { sendMail, createToken, extractId } = helpers;
+const {
+  sendMail,
+  createToken,
+  identifyUserById
+} = helpers;
 const {
   User,
   UserRole,
   Organization,
-  OrganizationType
+  OrganizationType,
+  Follow
 } = models;
 
 /**
@@ -190,7 +195,7 @@ class UserController {
     delete userData.updatedAt;
     delete userData.createdAt;
     delete userData.password;
-    let compare, role, data = userData;
+    let compare;
     try {
       compare = await bcrypt.compare(receivedPassword, hashedPassword);
     } catch (error) {
@@ -201,16 +206,78 @@ class UserController {
         status: 'failure',
         message: 'email/password do not match'
       });
-    } if (accountType === 'user') {
-      role = extractId('roleId', userData.role);
-      data = { ...userData, role };
     }
     return res.status(200).json({
       status: 'success',
       message: `${accountType} successfully logged in`,
-      userData: { ...data },
+      userData,
       token: createToken(id)
     });
+  }
+
+  /**
+   * @description let a user select organization
+    * @param {object} req - request object
+   * @param {object} res - response object
+   * @param {object} next - next function
+   * @returns {object} - returns null
+  */
+  static async followOrganization(req, res, next) {
+    const {
+      params: { organizationId }, userData: {
+        accountType, id: userId, firstName, lastName
+      }
+    } = req;
+    try {
+      const organization = await identifyUserById(organizationId, next);
+      if (typeof organization === 'object') {
+        if (accountType === 'organization') {
+          return res.status(400).json({
+            status: 'failure', message: 'organizations can not follow organizations'
+          });
+        }
+        const checkFollow = await Follow.find({ where: { userId, organizationId } });
+        let response, statusCode;
+        if (!checkFollow) {
+          await Follow.create({ userId, organizationId });
+          response = { status: 'success', message: 'organization followed successfully' };
+          statusCode = 201;
+          UserController.changeFollowerCount(Organization, organizationId, '+', 'followers');
+          UserController.changeFollowerCount(User, userId, '+', 'follows');
+          sendMail({
+            to: organization.email,
+            fullName: `${firstName} ${lastName}`,
+            mailType: 'followers',
+            organizationName: organization.name
+          });
+        } if (checkFollow) {
+          response = { status: 'failure', message: 'you are already following this organization' };
+          statusCode = 409;
+        }
+        return res.status(statusCode).json({ ...response });
+      }
+      return res.status(400).json({
+        status: 'failure', message: 'the organization you are trying to follow does not exist'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @description increase or decrease organization followers
+   * @param {object} model - action type
+   * @param {object} id - organization id
+   * @param {object} action - action to perform
+   * @param {object} attribute - action to perform
+   * @returns {object} - returns null
+  */
+  static async changeFollowerCount(model, id, action, attribute) {
+    if (action === '+') {
+      await model.increment(attribute, { where: { id } });
+    } else {
+      await model.increment(attribute, { where: { id }, by: -1 });
+    }
   }
 }
 

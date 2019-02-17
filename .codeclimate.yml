@@ -2,4 +2,7 @@ version: "2"
 checks:
   method-lines:
     config:
-      threshold: 35
+      threshold: 40
+exclude_patterns:
+  - "tests"
+  - "server/database"

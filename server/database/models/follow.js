@@ -1,5 +1,5 @@
 export default (sequelize, DataTypes) => {
-  const UserOrganization = sequelize.define('UserOrganization', {
+  const Follow = sequelize.define('Follow', {
     userId: {
       allowNull: false,
       type: DataTypes.INTEGER
@@ -9,19 +9,19 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
   }, {});
-  UserOrganization.associate = (models) => {
+  Follow.associate = (models) => {
     const {
       User,
       Organization
     } = models;
 
-    UserOrganization.belongsTo(User, {
+    Follow.belongsTo(User, {
       foreignKey: 'userId'
     });
 
-    UserOrganization.belongsTo(Organization, {
-      foreignKey: 'organizationId'
+    Follow.belongsTo(Organization, {
+      foreignKey: 'organizationId',
     });
   };
-  return UserOrganization;
+  return Follow;
 };

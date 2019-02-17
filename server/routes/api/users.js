@@ -9,7 +9,12 @@ const {
   verifyToken
 } = middlewares;
 const { identifyUserByEmail } = helpers;
-const { signup, verifyUser, login } = UserController;
+const {
+  signup,
+  verifyUser,
+  login,
+  followOrganization
+} = UserController;
 const { signupTypeValidator, validateUserLogin } = UserValidation;
 const user = express.Router();
 
@@ -24,6 +29,14 @@ user.post(
   signup
 );
 
+// log user or organization in
+user.post(
+  '/users/login',
+  validateUserLogin,
+  identifyUserByEmail,
+  login
+);
+
 // verify user account
 user.put(
   '/users/verify',
@@ -31,12 +44,11 @@ user.put(
   verifyUser
 );
 
-// log user or organization in
+// follow organization
 user.post(
-  '/users/login',
-  validateUserLogin,
-  identifyUserByEmail,
-  login
+  '/users/follow/:organizationId',
+  verifyToken,
+  followOrganization
 );
 
 export default user;

@@ -8,10 +8,11 @@ chai.use(chaiHttp);
 
 const { createToken } = helpers;
 const { request } = chai;
+let userVerificationToken, organizationVerificationToken, organizationId;
 const signupUrl = '/api/v1/users/signup';
 const verifyUrl = '/api/v1/users/verify';
 const loginUrl = '/api/v1/users/login';
-let userVerificationToken, organizationVerificationToken;
+const followUrl = '/api/v1/users/follow';
 describe('TEST SIGNUP ROUTE', () => {
   describe('TEST SIGNUP USER CONTROLLER', () => {
     it('should sign up a new user', (done) => {
@@ -41,13 +42,14 @@ describe('TEST SIGNUP ROUTE', () => {
           firstName: 'Test',
           lastName: 'testy',
           email: 'test@yahoo.com',
-          password: 'testtesttest'
+          password: 'testtesttest',
+          signupType: 'user'
         })
         .end((err, res) => {
           const { body: { message, status }, status: statusCode } = res;
           expect(statusCode).toBe(409);
           expect(status).toBe('failure');
-          expect(message).toBe('An account with this email already exists');
+          expect(message).toBe('a user with this email already exists');
           done();
         });
     });
@@ -174,8 +176,8 @@ describe('TEST SIGNUP ROUTE', () => {
       request(app)
         .post(signupUrl)
         .send({
-          name: 'University of biscuit',
-          type: 'Tertiary Institution',
+          name: 'Univedrsity of biscuit',
+          type: 'Tertdiary Institution',
           email: 'uniii@bis.com',
           country: '',
           address: '234 New York, New York',
@@ -194,9 +196,9 @@ describe('TEST SIGNUP ROUTE', () => {
       request(app)
         .post(signupUrl)
         .send({
-          name: 'University of biscuit',
+          name: 'Univerdsity of biscuit',
           type: 'Tertiary Institution',
-          email: 'uniii@bis.com',
+          email: 'unidii@bis.com',
           country: '7t',
           address: '234 New York, New York',
           password: 'testtesttest',
@@ -206,6 +208,48 @@ describe('TEST SIGNUP ROUTE', () => {
           const { body: { errors: { country } }, status: statusCode } = res;
           expect(statusCode).toBe(422);
           expect(country[0]).toBe('please select a valid country');
+          done();
+        });
+    });
+
+    it('should fail if organization name already exists', (done) => {
+      request(app)
+        .post(signupUrl)
+        .send({
+          name: 'University of biscuit',
+          type: 'Tertiary Institution',
+          email: 'uniiis@bis.com',
+          country: '',
+          address: '234 New York, New York',
+          password: 'testtesttest',
+          signupType: 'organization'
+        })
+        .end((err, res) => {
+          const { body: { message, status }, status: statusCode } = res;
+          expect(statusCode).toBe(409);
+          expect(status).toBe('failure');
+          expect(message).toBe('an organization with this name already exists');
+          done();
+        });
+    });
+
+    it('should fail if organization email already exists', (done) => {
+      request(app)
+        .post(signupUrl)
+        .send({
+          name: 'University of garri',
+          type: 'Tertiary Institution',
+          email: 'uni@bis.com',
+          country: '',
+          address: '234 New York, New York',
+          password: 'testtesttest',
+          signupType: 'organization'
+        })
+        .end((err, res) => {
+          const { body: { message, status }, status: statusCode } = res;
+          expect(statusCode).toBe(409);
+          expect(status).toBe('failure');
+          expect(message).toBe('an organization with this email already exists');
           done();
         });
     });
@@ -355,7 +399,7 @@ describe('TEST SIGNUP ROUTE', () => {
           const { body: { message, status }, status: statusCode } = res;
           expect(statusCode).toBe(404);
           expect(status).toBe('failure');
-          expect(message).toBe('user not found');
+          expect(message).toBe('account not found');
           done();
         });
     });
@@ -374,6 +418,77 @@ describe('TEST SIGNUP ROUTE', () => {
           expect(statusCode).toBe(200);
           expect(status).toBe('success');
           expect(message).toBe('user successfully logged in');
+          done();
+        });
+    });
+
+    it('should login if an organization is verified', (done) => {
+      request(app)
+        .post(loginUrl)
+        .send({
+          email: 'uni@bis.com',
+          password: 'testtesttest',
+        })
+        .end((err, res) => {
+          const { body: { status, message, userData }, status: statusCode } = res;
+          organizationId = userData.id;
+          expect(statusCode).toBe(200);
+          expect(status).toBe('success');
+          expect(message).toBe('organization successfully logged in');
+          done();
+        });
+    });
+  });
+
+  describe('TEST FOLLOWING USER', () => {
+    it('should follow an organization', (done) => {
+      request(app)
+        .post(`${followUrl}/${organizationId}`)
+        .set('Authorization', userVerificationToken)
+        .end((err, res) => {
+          const { body: { status, message }, status: statusCode } = res;
+          expect(statusCode).toBe(201);
+          expect(status).toBe('success');
+          expect(message).toBe('organization followed successfully');
+          done();
+        });
+    });
+
+    it('should fail to follow if already followed', (done) => {
+      request(app)
+        .post(`${followUrl}/${organizationId}`)
+        .set('Authorization', userVerificationToken)
+        .end((err, res) => {
+          const { body: { status, message }, status: statusCode } = res;
+          expect(statusCode).toBe(409);
+          expect(status).toBe('failure');
+          expect(message).toBe('you are already following this organization');
+          done();
+        });
+    });
+
+    it('should fail to follow an organization if requester is organizzation', (done) => {
+      request(app)
+        .post(`${followUrl}/${organizationId}`)
+        .set('Authorization', organizationVerificationToken)
+        .end((err, res) => {
+          const { body: { status, message }, status: statusCode } = res;
+          expect(statusCode).toBe(400);
+          expect(status).toBe('failure');
+          expect(message).toBe('organizations can not follow organizations');
+          done();
+        });
+    });
+
+    it('should fail to follow an organization if requester is organizzation', (done) => {
+      request(app)
+        .post(`${followUrl}/8978675645567`)
+        .set('Authorization', userVerificationToken)
+        .end((err, res) => {
+          const { body: { status, message }, status: statusCode } = res;
+          expect(statusCode).toBe(400);
+          expect(status).toBe('failure');
+          expect(message).toBe('the organization you are trying to follow does not exist');
           done();
         });
     });

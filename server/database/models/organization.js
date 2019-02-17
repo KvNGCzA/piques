@@ -20,14 +20,30 @@ export default (sequelize, DataTypes) => {
     address: {
       type: DataTypes.STRING,
     },
+    contactEmail: {
+      type: DataTypes.STRING
+    },
+    contactNumber: {
+      type: DataTypes.INTEGER
+    },
     country: {
       type: DataTypes.STRING
+    },
+    avatarUrl: {
+      allowNull: false,
+      type: DataTypes.STRING,
+      defaultValue: 'false'
     },
     verified: {
       allowNull: false,
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    followers: {
+      allowNull: false,
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    }
   }, {});
   Organization.associate = (models) => {
     const { OrganizationType } = models;
