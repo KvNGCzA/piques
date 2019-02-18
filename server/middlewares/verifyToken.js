@@ -21,7 +21,14 @@ export default async (req, res, next) => {
   );
   if (!decoded.message) {
     const { id } = decoded;
-    req.userData = await identifyUserById(id, res, next);
+    const findAccount = await identifyUserById(id, next);
+    if (typeof findAccount !== 'object') {
+      return res.status(404).json({
+        status: 'failure',
+        message: 'account not found'
+      });
+    }
+    req.userData = findAccount;
     return next();
   }
   if (decoded.message === 'jwt expired') {

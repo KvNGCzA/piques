@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('UserOrganizations', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Follows', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -32,5 +32,5 @@ export default {
       type: Sequelize.DATE
     }
   }),
-  down: queryInterface => queryInterface.dropTable('UserOrganizations')
+  down: queryInterface => queryInterface.dropTable('Follows')
 };

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 export default (obj) => {
   const {
-    to, fullName, mailType, token
+    to, fullName, mailType, token, organizationName
   } = obj;
   switch (mailType) {
     case 'verify signup':
@@ -27,6 +27,17 @@ export default (obj) => {
             enjoy our services.
             <br><br><br>
             <a href="${process.env.FRONTEND_BASE_URL}">Visit Site</a>
+          `
+      };
+    case 'followers':
+      return {
+        to,
+        from: 'PiQues<no-reply@piques.com>',
+        subject: 'New Follower!!',
+        html: `<b>Dear ${organizationName}</b>,
+            <br><br><br>
+            Congratulations, ${fullName} has followed you on PiQues.
+            <br><br><br>
           `
       };
     default:

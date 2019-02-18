@@ -20,12 +20,28 @@ export default {
     address: {
       type: Sequelize.STRING
     },
+    contactEmail: {
+      type: Sequelize.STRING
+    },
+    contactNumber: {
+      type: Sequelize.INTEGER
+    },
     country: {
       type: Sequelize.STRING
+    },
+    avatarUrl: {
+      allowNull: false,
+      type: Sequelize.STRING,
+      defaultValue: 'false'
     },
     verified: {
       allowNull: false,
       type: Sequelize.BOOLEAN
+    },
+    followers: {
+      allowNull: false,
+      type: Sequelize.INTEGER,
+      defaultValue: 0
     },
     createdAt: {
       allowNull: false,
