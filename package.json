@@ -9,7 +9,7 @@
     "test": "cross-env NODE_ENV=test yarn run db:rollback && cross-env NODE_ENV=test nyc mocha tests/**/**.test.js --require babel-register --exit",
     "cover": "./node_modules/.bin/babel-node node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- ./tests/**/**.test.js --exit",
     "coveralls": "yarn run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
-    "build": "babel . --ignore node_modules,coverage,dist -d dist/ ",
+    "build": "babel . --ignore node_modules,coverage,dist -d dist/ && cp swagger.json dist/",
     "db:rollback": "yarn run db:back && yarn run db:roll && yarn run db:seed",
     "db:roll": "sequelize db:migrate",
     "db:back": "sequelize db:migrate:undo:all",
@@ -39,7 +39,8 @@
     "pg": "^7.8.0",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.42.0",
-    "sequelize-cli": "^5.4.0"
+    "sequelize-cli": "^5.4.0",
+    "swagger-ui-express": "^4.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
