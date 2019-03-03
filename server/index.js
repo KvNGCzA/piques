@@ -3,11 +3,16 @@ import dotenv from 'dotenv';
 import logger from 'morgan';
 import validator from 'express-validator';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
 import routes from './routes';
+import swaggerDocument from '../swagger.json';
 
 dotenv.config();
 
 const port = process.env.PORT;
+const options = {
+  explorer: true
+};
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -22,10 +27,20 @@ app.use(cors());
 // api routes
 app.use(routes);
 
+// api docs
+app.use(
+  '/api/v1/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, options)
+);
+
 // / catch 404 and forward to error handler
 app.use((req, res, next) => {
+  /* istanbul ignore next */
   const err = new Error('Not Found');
+  /* istanbul ignore next */
   err.status = 404;
+  /* istanbul ignore next */
   next(err);
 });
 
@@ -39,6 +54,7 @@ app.use((err, req, res, next) => {
       message: err.message,
     }
   });
+  /* istanbul ignore next */
   if (isDevelopment) {
     next(err);
   }

@@ -1,0 +1,475 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PiQues API",
+    "description": "#### This is a documentation for the PiQues API. A platform for examination and test practicing\n",
+    "version": "1.0",
+    "contact": {
+      "email": "akanmuoluwadam ilare@yahoo.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/swagger-api/swagger-ui/blob/master/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://pq-back-staging.herokuapp.com/api/v1",
+      "description": "Staging server"
+    },
+    {
+      "url": "https://pq-back.herokuapp.com/api/v1",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "root",
+      "description": "The root path"
+    },
+    {
+      "name": "users",
+      "description": "The Users of PiQues"
+    },
+    {
+      "name": "organizations",
+      "description": "The Organizations in PiQues"
+    },
+    {
+      "name": "questions",
+      "description": "The examinations and tests in PiQues"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    },
+    "schemas": {
+      "SuccessMessage": {
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "message"
+        ]
+      },
+      "SuccessMessageWithState": {
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "state": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "status",
+          "message",
+          "state"
+        ]
+      },
+      "SuccessMessageWithResource": {
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "resource": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "status",
+          "message",
+          "resource"
+        ]
+      },
+      "UserProfile": {
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "avatarUrl": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "twitterUrl": {
+            "type": "string"
+          },
+          "facebookUrl": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid"
+      },
+      "UnpermittedError": {
+        "description": "No permissions to perform that action"
+      },
+      "NotFoundError": {
+        "description": "Resource(user, organization, exam) was not found"
+      },
+      "InvalidInputError": {
+        "description": "Invalid inputs"
+      },
+      "UnexpectedError": {
+        "description": "Unexpected error"
+      }
+    }
+  },
+  "paths": {
+    "/users/signup": {
+      "post": {
+        "tags": [
+          "users",
+          "organizations"
+        ],
+        "summary": "Create a new user or organization account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "example": "Christopher (For Users Only)"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Akanmu (For Users Only)"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "University Of Lagos (Organizations Only)"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "chris@yahoo.com(For Users and Organizations)"
+                  },
+                  "signupType": {
+                    "type": "string",
+                    "example": "'user' or 'organization' (For Users and Organizations)"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "98766fgh (For Users and Organizations)"
+                  },
+                  "country" : {
+                    "type": "string",
+                    "example": "Nigeria(For Organizations Only)"
+                  },
+                  "address": {
+                    "type": "string",
+                    "example": "24 Akaoka Yaba (For Organizations Only)"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "'High School', 'Tertiary Institution', 'Universtiy'(Organizations Only)" 
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "on successful signup",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "new user/organization created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "if email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failure"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "user/organization with this email already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "on failed signup",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failure"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "cause of failed signup listed here"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "users",
+          "organizations"
+        ],
+        "summary": "login to user or organization account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "chris@yahoo.com(For Users and Organizations)"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "98766fgh (For Users and Organizations)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "on successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "user/organization logged in successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "on failed login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failure"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "email/password do not match"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/users/verify?token={jwt-token}": {
+      "parameters": [
+        {
+          "in": "query",
+          "name": "token",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "jwt token here"
+          },
+          "description": "The verification token"
+        }
+      ],
+      "put": {
+        "tags": [
+          "users",
+          "organizations"
+        ],
+        "summary": "verify a user or organization account",
+        "responses": {
+          "200": {
+            "description": "on successful verification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "user/organization successfully verified"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "if verification fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failure"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "user/organization verification failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    },
+    "/users/follow/{organizationId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "organization Id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "973ey31-g387-73te"
+          },
+          "description": "The organization to follows id"
+        }
+      ],
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "a user should follow an organization",
+        "responses": {
+          "200": {
+            "description": "on successful follow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "you have sucessfully followed this organization"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "if follow fails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "failure"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "organizations cannot follow organizations"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/UnexpectedError"
+          }
+        }
+      }
+    }
+  }
+}
