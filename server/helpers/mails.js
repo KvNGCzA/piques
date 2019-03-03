@@ -41,6 +41,7 @@ export default (obj) => {
           `
       };
     default:
+      /* istanbul ignore next */
       break;
   }
 };

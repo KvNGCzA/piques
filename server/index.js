@@ -36,8 +36,11 @@ app.use(
 
 // / catch 404 and forward to error handler
 app.use((req, res, next) => {
+  /* istanbul ignore next */
   const err = new Error('Not Found');
+  /* istanbul ignore next */
   err.status = 404;
+  /* istanbul ignore next */
   next(err);
 });
 
@@ -51,6 +54,7 @@ app.use((err, req, res, next) => {
       message: err.message,
     }
   });
+  /* istanbul ignore next */
   if (isDevelopment) {
     next(err);
   }

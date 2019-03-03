@@ -18,6 +18,7 @@ export default async (req, res, next) => {
         }
       });
     } catch (error) {
+      /* istanbul ignore next */
       next(error);
     }
   }

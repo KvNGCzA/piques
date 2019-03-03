@@ -84,6 +84,7 @@ class UserController {
         token
       });
     } catch (error) {
+      /* istanbul ignore next */
       next(error);
     }
   }
@@ -128,6 +129,7 @@ class UserController {
         token
       });
     } catch (error) {
+      /* istanbul ignore next */
       next(error);
     }
   }
@@ -169,6 +171,7 @@ class UserController {
         message: `${accountType} verified successfully`
       });
     } catch (error) {
+      /* istanbul ignore next */
       next(error);
     }
   }
@@ -199,6 +202,7 @@ class UserController {
     try {
       compare = await bcrypt.compare(receivedPassword, hashedPassword);
     } catch (error) {
+      /* istanbul ignore next */
       next(error);
     }
     if (!compare) {
@@ -260,6 +264,7 @@ class UserController {
         status: 'failure', message: 'the organization you are trying to follow does not exist'
       });
     } catch (error) {
+      /* istanbul ignore next */
       next(error);
     }
   }

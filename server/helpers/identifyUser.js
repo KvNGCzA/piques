@@ -53,6 +53,7 @@ export const identifyUserByEmail = async (req, res, next) => {
       where: { email }
     });
   } catch (error) {
+    /* istanbul ignore next */
     next(error);
   }
   let result;
